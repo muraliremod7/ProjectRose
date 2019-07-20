@@ -6,8 +6,6 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
-import info.androidhive.paytmgateway.networking.model.AppConfig;
-
 public class PrefManager {
     private static PrefManager instance;
     private final SharedPreferences sharedPreferences;
@@ -24,18 +22,4 @@ public class PrefManager {
         return instance;
     }
 
-    public void setAppConfig(AppConfig config){
-        editor = sharedPreferences.edit();
-        editor.putString("app_config", new Gson().toJson(config));
-        editor.commit();
-    }
-
-    public AppConfig getAppConfig(){
-        String configJson = sharedPreferences.getString("app_config", null);
-        if(!TextUtils.isEmpty(configJson)){
-            return new Gson().fromJson(configJson, AppConfig.class);
-        }
-
-        return null;
-    }
 }

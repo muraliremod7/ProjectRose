@@ -14,8 +14,6 @@ import android.util.TypedValue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import io.realm.RealmResults;
 import timber.log.Timber;
 
 public class Utils {

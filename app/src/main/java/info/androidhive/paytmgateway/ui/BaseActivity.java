@@ -3,10 +3,13 @@ package info.androidhive.paytmgateway.ui;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -123,6 +126,33 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public boolean isValidMobile(String phone) {
+        return android.util.Patterns.PHONE.matcher(phone).matches();
+    }
+    public boolean isValidMail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
     public void makeFullScreen() {
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);

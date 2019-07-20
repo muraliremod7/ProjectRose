@@ -14,24 +14,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import info.androidhive.paytmgateway.R;
-import info.androidhive.paytmgateway.db.AppDatabase;
-import info.androidhive.paytmgateway.db.AppPref;
-import info.androidhive.paytmgateway.model.User;
-import info.androidhive.paytmgateway.networking.model.LoginRequest;
+import info.androidhive.paytmgateway.helper.ShowToast;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends BaseActivity {
 
-    @BindView(R.id.input_email)
-    EditText inputEmail;
+    @BindView(R.id.input_mobile_l)
+    EditText inputMobile;
 
-    @BindView(R.id.input_password)
+    @BindView(R.id.input_password_l)
     EditText inputPassword;
 
     @BindView(R.id.loader)
     AVLoadingIndicatorView loader;
+
+    private ShowToast showToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +38,7 @@ public class LoginActivity extends BaseActivity {
         makeFullScreen();
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        showToast = new ShowToast(this);
         changeStatusBarColor(ContextCompat.getColor(this, R.color.colorAccent));
         hideToolbar();
     }
@@ -50,38 +50,17 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btn_login)
     void onLoginClick() {
-        String email = inputEmail.getText().toString();
+        String mobile = inputMobile.getText().toString();
         String password = inputPassword.getText().toString();
 
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+        if (TextUtils.isEmpty(mobile) || TextUtils.isEmpty(password)) {
             Toast.makeText(getApplicationContext(), getString(R.string.msg_enter_credentials), Toast.LENGTH_LONG).show();
             return;
         }
-
+        if(!isValidMobile(mobile)){
+            showToast.showWarningToast("Enter Valid Mobile Number");
+        }
         loader.setVisibility(View.VISIBLE);
-        LoginRequest request = new LoginRequest();
-        request.email = email;
-        request.password = password;
-        getApi().login(request).enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                loader.setVisibility(View.INVISIBLE);
-                if (!response.isSuccessful()) {
-                    handleError(response.errorBody());
-                    return;
-                }
-
-                AppDatabase.saveUser(response.body());
-                AppPref.getInstance().saveAuthToken(response.body().token);
-                launchSplash(LoginActivity.this);
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                loader.setVisibility(View.INVISIBLE);
-                handleError(t);
-            }
-        });
     }
 
     @OnClick(R.id.register_now)
@@ -89,6 +68,5 @@ public class LoginActivity extends BaseActivity {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish();
     }
 }

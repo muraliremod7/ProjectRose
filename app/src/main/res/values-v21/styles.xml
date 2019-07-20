@@ -5,4 +5,14 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:layout_height">50dp</item>
     </style>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/gradient_2</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+        <item name="actionMenuTextColor">@android:color/black</item>
+    </style>
 </resources>
